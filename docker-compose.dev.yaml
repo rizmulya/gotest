@@ -1,0 +1,38 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/app
+      - ./frontend/dist:/app/frontend/dist
+    networks:
+      - mynetwork
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    networks:
+      - mynetwork
+
+  nginx:
+    image: nginx:1.21.6-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend/dist:/usr/share/nginx/html
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge

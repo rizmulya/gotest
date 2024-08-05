@@ -1,0 +1,35 @@
+services:
+  backend:
+    build: ./backend
+    volumes:
+      - ./frontend/dist:/app/frontend/dist 
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    command: ["npm", "run", "build"]
+    volumes:
+      - ./frontend:/app
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.21.6-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend/dist:/usr/share/nginx/html 
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+networks:
+  mynetwork:
+    driver: bridge
