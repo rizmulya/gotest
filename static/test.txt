@@ -1,0 +1,3 @@
+this directory is accessible from the url, try:
+
+/static/test.txt
