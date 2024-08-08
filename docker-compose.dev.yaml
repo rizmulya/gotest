@@ -10,9 +10,9 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
     volumes:
-      - ./backend:/app
-      - ./frontend/dist:/app/frontend/dist
+      - ./backend:/app/backend
       - ./static:/app/static
+      - ./static/dist/index.html:/app/backend/views/index.html
     depends_on:
       - postgres
     networks:
@@ -23,8 +23,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     volumes:
-      - ./frontend:/app
-      - ./static:/app/public/static
+      - ./frontend:/app/frontend
+      - ./static:/app/frontend/public/static
     ports:
       - "5173:5173"
     networks:

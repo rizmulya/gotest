@@ -10,7 +10,7 @@ import (
     "time"
 )
 
-const staticImgDir = "./static/uploads/images"
+const staticImgDir = "../static/uploads/images"
 
 func GetUsers(c *fiber.Ctx) error {
     var users []models.User
@@ -99,6 +99,7 @@ func UpdateUser(c *fiber.Ctx) error {
 
     // Update other fields
     user.Email = updateUser.Email
+    user.Name = updateUser.Name
 
     // Handle image
     file, err := c.FormFile("image")
@@ -144,7 +145,8 @@ func DeleteUser(c *fiber.Ctx) error {
         os.Remove(imagePath)
     }
 
-    if err := database.DB.Delete(&user, id).Error; err != nil {
+    // soft delete => database.DB.Delete(&user, id)
+    if err := database.DB.Unscoped().Delete(&user, id).Error; err != nil {
         return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
             "error": err.Error(),
         })

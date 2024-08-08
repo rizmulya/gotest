@@ -18,6 +18,7 @@ func Register(c *fiber.Ctx) error {
     password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), bcrypt.DefaultCost)
 
     user := models.User{
+        Name: data["name"],
         Email: data["email"],
         Password: string(password),
         Role:     "user", // Default role

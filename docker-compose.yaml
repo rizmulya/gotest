@@ -8,8 +8,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
     volumes:
-      - ./frontend/dist:/app/frontend/dist 
       - ./static:/app/static
+      - ./static/dist/index.html:/app/backend/views/index.html
     depends_on:
       - postgres
     networks:
@@ -20,7 +20,7 @@ services:
     build: ./frontend
     command: ["npm", "run", "build"]
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app/frontend
     networks:
       - mynetwork
     restart: unless-stopped

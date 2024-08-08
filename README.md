@@ -25,5 +25,3 @@ need to fix:
 need to improve:
 - csrf
 - jwt include user data
-
-feat: user crud, auth, register.

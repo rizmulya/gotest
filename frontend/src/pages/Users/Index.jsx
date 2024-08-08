@@ -1,13 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import api from '@/api';
 
 const Index = () => {
   const [users, setUsers] = useState([]);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [image, setImage] = useState(null);
+  const imageInputRef = useRef(null);
+
   const [error, setError] = useState('');
+
   const [editingUser, setEditingUser] = useState(null);
 
   useEffect(() => {
@@ -27,6 +31,7 @@ const Index = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
+      formData.append('name', name);
       formData.append('email', email);
       formData.append('password', password);
       formData.append('role', role);
@@ -42,10 +47,12 @@ const Index = () => {
 
       if (response.status === 200) {
         setUsers([...users, response.data]);
+        setName('');
         setEmail('');
         setPassword('');
         setRole('');
         setImage(null);
+        imageInputRef.current.value = '';
       }
     } catch (error) {
       setError(error.response?.data?.error || 'Failed to create user');
@@ -56,6 +63,7 @@ const Index = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
+      formData.append('name', name);
       formData.append('email', email);
       if (password) {
         formData.append('password', password);
@@ -74,10 +82,12 @@ const Index = () => {
       if (response.status === 200) {
         setUsers(users.map(user => (user.ID === editingUser.ID ? response.data : user)));
         setEditingUser(null);
+        setName('');
         setEmail('');
         setPassword('');
         setRole('');
         setImage(null);
+        imageInputRef.current.value = '';
       }
     } catch (error) {
       setError(error.response?.data?.error || 'Failed to update user');
@@ -95,16 +105,27 @@ const Index = () => {
 
   const startEditUser = (user) => {
     setEditingUser(user);
+    setName(user.name);
     setEmail(user.email);
     setPassword('');
     setRole(user.role);
     setImage(null);
+    imageInputRef.current.value = '';
   };
 
   return (
     <div>
       <h2>Users</h2>
       <form onSubmit={editingUser ? handleUpdate : handleCreate}>
+        <div>
+          <label>Name</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
         <div>
           <label>Email</label>
           <input
@@ -120,7 +141,7 @@ const Index = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required
+            required={!editingUser}
           />
         </div>
         <div>
@@ -137,6 +158,7 @@ const Index = () => {
           <input
             type="file"
             onChange={(e) => setImage(e.target.files[0])}
+            ref={imageInputRef}
           />
         </div>
         {error && <div style={{ color: 'red' }}>{error}</div>}
@@ -147,6 +169,7 @@ const Index = () => {
         <thead>
           <tr>
             <th>ID</th>
+            <th>Name</th>
             <th>Email</th>
             <th>Role</th>
             <th>Image</th>
@@ -157,9 +180,14 @@ const Index = () => {
           {users.map(user => (
             <tr key={user.ID}>
               <td>{user.ID}</td>
+              <td>{user.name}</td>
               <td>{user.email}</td>
               <td>{user.role}</td>
-              <td><img src={"/static/uploads/images/" + user.image} alt="User" width="50" /></td>
+              <td>
+                {user.image && (
+                  <img src={`/static/uploads/images/${user.image}`} alt="User" width="50" />
+                )}
+              </td>
               <td>
                 <button onClick={() => startEditUser(user)}>Edit</button>
                 <button onClick={() => handleDelete(user.ID)}>Delete</button>

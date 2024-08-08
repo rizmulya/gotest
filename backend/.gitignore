@@ -1,3 +1,4 @@
-frontend/
-static/
+# air go
 tmp/
+# docker mount volume
+views/index.html
