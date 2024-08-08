@@ -1,8 +1,17 @@
 services:
   backend:
     build: ./backend
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     volumes:
       - ./frontend/dist:/app/frontend/dist 
+      - ./static:/app/static
+    depends_on:
+      - postgres
     networks:
       - mynetwork
     restart: unless-stopped
@@ -12,6 +21,18 @@ services:
     command: ["npm", "run", "build"]
     volumes:
       - ./frontend:/app
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - mynetwork
     restart: unless-stopped
@@ -30,6 +51,20 @@ services:
       - mynetwork
     restart: unless-stopped
 
+  adminer:
+    image: adminer:4.8.1
+    container_name: adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
 networks:
   mynetwork:
     driver: bridge
+
+volumes:
+  postgres_data:

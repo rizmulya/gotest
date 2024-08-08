@@ -1,6 +1,6 @@
 # gotest
 
-testing: Golang Postgress Docker Nginx.
+testing: Golang Postgress Docker Nginx React.
 
 init go.mod & go.sum
 ```
@@ -18,3 +18,12 @@ production
 ```
 docker-compose up -d
 ```
+
+need to fix:
+- env
+
+need to improve:
+- csrf
+- jwt include user data
+
+feat: user crud, auth, register.

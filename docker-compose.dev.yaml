@@ -3,9 +3,18 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     volumes:
       - ./backend:/app
       - ./frontend/dist:/app/frontend/dist
+      - ./static:/app/static
+    depends_on:
+      - postgres
     networks:
       - mynetwork
 
@@ -15,8 +24,20 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./frontend:/app
+      - ./static:/app/public/static
     ports:
       - "5173:5173"
+    networks:
+      - mynetwork
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - mynetwork
 
@@ -33,6 +54,19 @@ services:
     networks:
       - mynetwork
 
+  adminer:
+    image: adminer:4.8.1
+    container_name: adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetwork
+
 networks:
   mynetwork:
     driver: bridge
+
+volumes:
+  postgres_data:
