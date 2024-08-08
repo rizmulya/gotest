@@ -2,3 +2,4 @@
 tmp/
 # docker mount volume
 views/index.html
+.env

@@ -13,6 +13,7 @@ services:
       - ./backend:/app/backend
       - ./static:/app/static
       - ./static/dist/index.html:/app/backend/views/index.html
+      - ./.env:/app/backend/.env
     depends_on:
       - postgres
     networks:

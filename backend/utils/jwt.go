@@ -13,7 +13,7 @@ var jwtSecret []byte
 func init() {
     err := godotenv.Load()
     if err != nil {
-        log.Println("Error loading .env file, using environment variables")
+        log.Println("⛔ ERROR", err)
     }
     jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 }

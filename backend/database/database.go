@@ -6,7 +6,7 @@ import (
     "gorm.io/gorm"
     "github.com/joho/godotenv"
     "log"
-    // "os"
+    "os"
 )
 
 var DB *gorm.DB
@@ -14,31 +14,19 @@ var DB *gorm.DB
 func Connect() {
     err := godotenv.Load()
     if err != nil {
-        log.Println("Error loading .env file, using environment variables")
+        log.Println("⛔ ERROR", err)
     }
 
-    // ds= "host=" + os.Getenv("DB_HOST") +
-    //     " user=" + os.Getenv("DB_USER") +
-    //     " password=" + os.Getenv("DB_PASSWORD") +
-    //     " dbname=" + os.Getenv("DB_NAME") +
-    //     " port=" + os.Getenv("DB_PORT") +
-    //     " sslmode=disable"n := "host=" + os.Getenv("DB_HOST") +
-    //     " user=" + os.Getenv("DB_USER") +
-    //     " password=" + os.Getenv("DB_PASSWORD") +
-    //     " dbname=" + os.Getenv("DB_NAME") +
-    //     " port=" + os.Getenv("DB_PORT") +
-    //     " sslmode=disable"
-
-    dsn := "host=" + "postgres" +
-        " user=" + "postgres" +
-        " password=" + "yourpassword" +
-        " dbname=" + "yourdatabase" +
-        " port=" + "5432" +
+    dsn := "host=" + os.Getenv("DB_HOST") +
+        " user=" + os.Getenv("DB_USER") +
+        " password=" + os.Getenv("DB_PASSWORD") +
+        " dbname=" + os.Getenv("DB_NAME") +
+        " port=" + os.Getenv("DB_PORT") +
         " sslmode=disable"
 
     db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
     if err != nil {
-        log.Fatal("Failed to connect to database:", err)
+        log.Fatal("⛔ ERROR", err)
     }
     DB = db
 
