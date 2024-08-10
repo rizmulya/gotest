@@ -40,10 +40,10 @@ func main() {
 	// /api/users
 	user := api.Group("/users", middleware.Auth("admin"))
 	user.Get("/", handlers.GetUsers)
-	user.Get("/:id", handlers.GetUser)
+	user.Get("/:uid", handlers.GetUser)
 	user.Post("/", handlers.CreateUser)
-	user.Put("/:id", handlers.UpdateUser)
-	user.Delete("/:id", handlers.DeleteUser)
+	user.Put("/:uid", handlers.UpdateUser)
+	user.Delete("/:uid", handlers.DeleteUser)
 
 	/*
 	 * Server Side Page

@@ -12,8 +12,7 @@ import (
 var DB *gorm.DB
 
 func Connect() {
-    err := godotenv.Load()
-    if err != nil {
+    if err := godotenv.Load(); err != nil {
         log.Println("⛔ ERROR", err)
     }
 

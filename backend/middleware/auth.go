@@ -3,7 +3,7 @@ package middleware
 import (
     "gotest/utils"
     "github.com/gofiber/fiber/v2"
-	"strings"
+	// "strings"
 )
 
 func Auth(roles ...string) fiber.Handler {
@@ -47,9 +47,9 @@ func Auth(roles ...string) fiber.Handler {
     }
 }
 
-func extractToken(authHeader string) string {
-    if strings.HasPrefix(authHeader, "Bearer ") {
-        return strings.TrimPrefix(authHeader, "Bearer ")
-    }
-    return ""
-}
+// func extractToken(authHeader string) string {
+//     if strings.HasPrefix(authHeader, "Bearer ") {
+//         return strings.TrimPrefix(authHeader, "Bearer ")
+//     }
+//     return ""
+// }

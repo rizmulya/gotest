@@ -21,13 +21,19 @@ func Register(c *fiber.Ctx) error {
         Name: data["name"],
         Email: data["email"],
         Password: string(password),
-        Role:     "user", // Default role
+        Role: "user", // Default role
     }
 
+    // handle UID
+	for {
+		user.Uid = utils.RandStr()
+		if database.DB.Where("uid = ?", user.Uid).First(&models.User{}).Error != nil {
+			break
+		}
+	}
+
     if err := database.DB.Create(&user).Error; err != nil {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "error": err.Error(),
-        })
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
     }
 
     return c.JSON(user)
@@ -58,9 +64,7 @@ func Login(c *fiber.Ctx) error {
 
     token, err := utils.GenerateJWT(user.ID, user.Role)
     if err != nil {
-        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-            "error": err.Error(),
-        })
+        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
     }
 
 	// use cookie

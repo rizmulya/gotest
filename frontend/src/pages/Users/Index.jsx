@@ -73,14 +73,14 @@ const Index = () => {
         formData.append('image', image);
       }
 
-      const response = await api.put(`/api/users/${editingUser.ID}`, formData, {
+      const response = await api.put(`/api/users/${editingUser.uid}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
       if (response.status === 200) {
-        setUsers(users.map(user => (user.ID === editingUser.ID ? response.data : user)));
+        setUsers(users.map(user => (user.uid === editingUser.uid ? response.data : user)));
         setEditingUser(null);
         setName('');
         setEmail('');
@@ -94,10 +94,10 @@ const Index = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (uid) => {
     try {
-      await api.delete(`/api/users/${id}`);
-      setUsers(users.filter(user => user.ID !== id));
+      await api.delete(`/api/users/${uid}`);
+      setUsers(users.filter(user => user.uid !== uid));
     } catch (error) {
       setError(error.response?.data?.error || 'Failed to delete user');
     }
@@ -190,7 +190,7 @@ const Index = () => {
               </td>
               <td>
                 <button onClick={() => startEditUser(user)}>Edit</button>
-                <button onClick={() => handleDelete(user.ID)}>Delete</button>
+                <button onClick={() => handleDelete(user.uid)}>Delete</button>
               </td>
             </tr>
           ))}
