@@ -1,0 +1,6 @@
+// dev only
+
+// user login email:admin@mail.com password:admin
+
+INSERT INTO "users" ("id", "created_at", "updated_at", "deleted_at", "uid", "name", "email", "password", "role", "image") VALUES
+(1,	'2024-08-13 02:21:49.401427+00',	'2024-08-13 02:21:49.401427+00',	NULL,	'uuAWIresTpW-xsCM3JZS58i',	'my admin',	'admin@mail.com',	'$2a$10$vS0nnYpjHbRp8fuvLtJ2qer6d/PB0gQy7dVic019rdH6qpyK.exge',	'admin',	'');

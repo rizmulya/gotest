@@ -6,7 +6,10 @@ import (
 	"gotest/middleware"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/csrf"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/gofiber/template/html/v2"
+	"time"
 )
 
 func main() {
@@ -14,6 +17,13 @@ func main() {
 	 * setup
 	 */
 	database.Connect()
+
+	store := session.New(session.Config{
+		CookieHTTPOnly: true,
+		CookieSecure:   false, //dev
+		CookieSameSite: "Strict",
+		Expiration:     24 * time.Hour,
+	})
 
 	engine := html.New("./views", ".html")
 
@@ -24,8 +34,26 @@ func main() {
 	// for development only
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     "http://localhost:5173",
-		AllowHeaders:     "Origin, Content-Type, Accept",
+		AllowHeaders:     "Origin, Content-Type, Accept, X-CSRF-Token",
 		AllowCredentials: true,
+	}))
+
+	// CSRF middleware
+	app.Use(csrf.New(csrf.Config{
+		KeyLookup:         "header:X-Csrf-Token",
+		CookieName:        "csrf_",
+		CookieSameSite:    "Strict",
+		CookieSecure:      false, //dev
+		CookieHTTPOnly:    false,
+		CookieSessionOnly: true,
+		Expiration:        1 * time.Hour,
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+				"error": "Invalid CSRF token",
+			})
+		},
+		Session:    store,
+		SessionKey: "fiber.csrf.token",
 	}))
 
 	/*
@@ -49,26 +77,18 @@ func main() {
 	 * Server Side Page
 	 */
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("landingPage", fiber.Map{
-			"key": "value",
-		})
+		return c.Render("landingPage", fiber.Map{})
 	})
 
 	/*
 	 * Client Side Page
 	 */
 	app.Get("/login", func(c *fiber.Ctx) error {
-		return c.Render("index", fiber.Map{
-			"key": "valuex",
-		})
+		return c.Render("index", fiber.Map{})
 	})
 	app.Get("/users", middleware.Auth(), func(c *fiber.Ctx) error {
-		return c.Render("index", fiber.Map{
-			"key": "valuex",
-		})
+		return c.SendFile("./views/index.html")
 	})
-
-	// app.Static("/", "./frontend/dist")
 
 	app.Listen(":8000")
 }

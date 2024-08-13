@@ -18,7 +18,3 @@ production
 ```
 docker-compose up -d
 ```
-
-need to improve:
-- csrf
-- jwt include user data
